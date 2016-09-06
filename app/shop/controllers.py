@@ -1,7 +1,8 @@
 from flask import (render_template,
                    abort,
                    Blueprint,
-                   current_app)
+                   current_app,
+                   )
 
 module = Blueprint('shop',
                    __name__)
@@ -10,8 +11,10 @@ module = Blueprint('shop',
 def log_error(*args, **kwargs):
     current_app.logger.error(*args, **kwargs)
 
-
 @module.route('/')
 def single_product():
     return render_template('shop/single-product.html')
 
+@module.route('/parse')
+def parse():
+    from ..parse import parse
