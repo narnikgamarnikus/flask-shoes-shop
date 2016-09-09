@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import urllib.request
 import csv
+import collections
+
 from app.shop.models import Products
 from app.database import db
 from sqlalchemy.orm import sessionmaker
@@ -9,38 +11,53 @@ from flask import abort
 
 class Parse:
 
+    Category = collections.namedtuple("Category", "pos element1 element2 method")
+
+    def __init__(self, k):
+        self.data = {'title': Category(-1, 'ol', 'li', 'breadcrumb'),
+                    'gender': Category(0, 'ol', 'a', 'breadcrumb'),
+                    'category': Category(1, 'ol', 'a', 'breadcrumb'),
+                    'model': Category(2, 'ol', 'a', 'breadcrumb'),
+                    'article': Category(0, 'p', 'span', 'product_code'),
+                    'article2': Category(0, 'h1', 'span', '')}
     k = 1
 
-    def __init__(self,k):
-        pass
 
 
-    def read_csv(k):
+    def csv(k):
         with open('/home/narnikgamarnik/PycharmProjects/my_phyton3_projects/products_links2.csv') as f:
             r = csv.reader(f)
             cont = [row for row in r]
-            d = (cont[k])[0]
-            return d
+            link = (cont[k])[0]
+            return link
 
+    link = csv(k)
 
-
-
-    def get_url(d):
+    def url(link):
         try:
-            url = urllib.request.urlopen(d)
+            url = urllib.request.urlopen(link)
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 return False
             else:
                 raise
         return url
+    url = url(link)
 
-    def get_html_soup(url):
-        response = urllib.request.urlopen()
-        return BeautifulSoup(response, 'html.parser')
-
-    def get_title(soup):
+    def page(url):
         try:
+            page = BeautifulSoup(url, 'html.parser')
+        except AttributeError:
+            return False
+        return page
+    page = page(url)
+    print(page)
+
+
+'''
+    def get_title(url):
+        try:
+            soup = BeautifulSoup(url, 'html.parser')
             h1 = soup.find('h1')
             title = h1.find_all('span')[-1].string
         except AttributeError:
@@ -157,11 +174,11 @@ class Parse:
                self.price_eur, \
                self.price_gbp, \
                self.price_rub, \
-               self.images, \
-
+               self.images
 
     def write_in_base(self):
-        self.product = Products(url         = self.d,
+        self.product = Products(id          = 3,
+                                url         = self.d,
                                 title       = self.title,
                                 brand       = self.gender,
                                 model       = self.model,
@@ -172,51 +189,9 @@ class Parse:
                                 priceeur    = self.price_eur,
                                 pricegbp    = self.price_gbp,
                                 pricerub    = self.price_rub,
-                                images      = self.images)
+                                images      = self.images )
         db.create_all()
         db.session.add(self.product)
         db.session.commit()
         return self.product
-
-'''
-
-    def get_parse(self,k):
-        self.k = k
-        self.d = read_csv(k)
-        print('Посетили страницу ' + str(d))
-        self.url = get_url(d)
-        self.title = get_title(url)
-        print('Спарсили титул ' + str(title))
-        self.url = get_url(d)
-        self.brand = get_brand(url)
-        print('Спарсили бренд ' + str(brand))
-        self.url = get_url(d)
-        self.model = get_model(url)
-        print('Спарсили модель ' + str(model))
-        self.url = get_url(d)
-        self.article = get_article(url)
-        print('Спарсили артикул ' + str(article))
-        self.url = get_url(d)
-        self.article_2 = get_article_2(url)
-        print('Спарсили альтернативный титул ' + str(article_2))
-        self.url = get_url(d)
-        self.product_price = get_prices(url)
-        print('Спарсили цену ' + str((product_price[0].string)[3:6]) + ' PLN')
-        self.url = get_url(d)
-        self.product_price = get_prices(url)
-        print('Спарсили цену ' + str((product_price[1].string)[3:6]) + ' USD')
-        self.url = get_url(d)
-        self.product_price = get_prices(url)
-        print('Спарсили цену ' + str((product_price[2].string)[3:6]) + ' EUR')
-        self.url = get_url(d)
-        self.product_price = get_prices(url)
-        print('Спарсили цену ' + str((product_price[3].string)[3:6]) + ' GBP')
-        self.url = get_url(d)
-        self.product_price = get_prices(url)
-        print('Спарсили цену ' + str((product_price[4].string)[3:7]) + ' RUB')
-        self.url = get_url(d)
-        self.images = get_img(url)
-        print('Спарсили картинку ' + str(images))
-        print('Получили k равный ' + str(k))
-        return print('Парсинг ' + str(k) + ' позиций окончен')
 '''

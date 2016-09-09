@@ -1,6 +1,7 @@
 {% extends "shop/base.html" %}
 {% block content %}
 		<!-- MAIN-CONTENT-SECTION START -->
+		{% for product in sp %}
 		<section class="main-content-section">
 			<div class="container">
 				<div class="row">
@@ -9,7 +10,7 @@
 						<div class="bstore-breadcrumb">
 							<a href="index.html">HOMe<span><i class="fa fa-caret-right"></i> </span> </a>
 							<span> <i class="fa fa-caret-right"> </i> </span>
-							<a href="shop-gird.html"> women </a>
+							<a href="shop-gird.html"> {{brand}} </a>
 							<span> {{alttitle}} </span>
 						</div>
 						<!-- BSTORE-BREADCRUMB END -->
@@ -25,44 +26,9 @@
 									<div class="tab-content">
 										<div class="tab-pane active" id="thumbnail_1">
 											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/1.jpg') }}" alt="single-product-image" />
+												<img src="{{product.image}}" alt="single-product-image" />
 												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/1.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-											</div>	
-										</div>
-										<div class="tab-pane" id="thumbnail_2">
-											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/3.jpg') }}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/3.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-											</div>	
-										</div>
-										<div class="tab-pane" id="thumbnail_3">
-											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/9.jpg') }}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/9.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-											</div>	
-										</div>
-										<div class="tab-pane" id="thumbnail_4">
-											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/13.jpg') }}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/13.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-											</div>	
-										</div>
-										<div class="tab-pane" id="thumbnail_5">
-											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/7.jpg') }}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/7.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-											</div>	
-										</div>
-										<div class="tab-pane" id="thumbnail_6">
-											<div class="single-product-image">
-												<img src="{{ url_for('static', filename='shop/img/product/sale/12.jpg') }}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{ url_for('static', filename='shop/img/product/sale/12.jpg') }}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+												<a class="fancybox" href="{{image1}}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
 											</div>	
 										</div>
 									</div>										
@@ -70,30 +36,21 @@
 								<div class="select-product">
 									<!-- Nav tabs -->
 									<ul class="nav nav-tabs select-product-tab bxslider">
+
 										<li class="active">
-											<a href="single-product.html#thumbnail_1" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/1.jpg') }}" alt="pro-thumbnail" /></a>
+											<a href="single-product.html#thumbnail_1" data-toggle="tab"><img src="{{images}}" alt="pro-thumbnail" /></a>
 										</li>
+										{% for image in images %}
 										<li>
-											<a href="single-product.html#thumbnail_2" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/2.jpg') }}" alt="pro-thumbnail" /></a>
+											<a href="single-product.html#thumbnail_2" data-toggle="tab"><img src="{{images}}" alt="pro-thumbnail" /></a>
 										</li>
-										<li>
-											<a href="single-product.html#thumbnail_3" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/3.jpg') }}" alt="pro-thumbnail" /></a>
-										</li>
-										<li>
-											<a href="single-product.html#thumbnail_4" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/4.jpg') }}" alt="pro-thumbnail" /></a>
-										</li>
-										<li>
-											<a href="single-product.html#thumbnail_5" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/5.jpg') }}" alt="pro-thumbnail" /></a>
-										</li>
-										<li>
-											<a href="single-product.html#thumbnail_6" data-toggle="tab"><img src="{{ url_for('static', filename='shop/img/product/sidebar_product/6.jpg') }}" alt="pro-thumbnail" /></a>
-										</li>
-									</ul>										
+										{% endfor %}
+									</ul>
 								</div>
 							</div>
 							<div class="col-lg-7 col-md-7 col-sm-8 col-xs-12">
 								<div class="single-product-descirption">
-									<h2>Faded Short Sleeves T-shirt</h2>
+									<h2>{{alttitle}}</h2>
 									<div class="single-product-social-share">
 										<ul>
 											<li><a href="single-product.html#" class="twi-link"><i class="fa fa-twitter"></i>Tweet</a></li>
@@ -122,7 +79,7 @@
 										<p>Condition: <span>New product</span></p>
 									</div>
 									<div class="single-product-price">
-										<h2>$16.51</h2>
+										<h2>{{priceusd}}</h2>
 									</div>
 									<div class="single-product-desc">
 										<p>Faded short sleeves t-shirt with high neckline. Soft and stretchy material for a comfortable fit. Accessorize with a straw hat and you're ready for summer!</p>
@@ -677,5 +634,6 @@
 				</div>
 			</div>
 		</section>
+{% endfor %}
 		<!-- MAIN-CONTENT-SECTION END -->
 	{% endblock content %}
