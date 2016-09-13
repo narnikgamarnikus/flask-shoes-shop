@@ -87,6 +87,9 @@
 		<!-- MODERNIZR JS
 		============================================ -->
         <script src="{{ url_for('static', filename='shop/js/vendor/modernizr-2.6.2.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/sijax.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/json2.js') }}"></script>
+		<script type="text/javascript">{{ g.sijax.get_js()|safe }}</script>
 </head>
 <body>
         <!--[if lt IE 8]>
@@ -110,11 +113,12 @@
 							<div class="currenty-converter">
 								<form method="post" action="single-product.html#" id="currency-set">
 									<div class="current-currency">
-										<span class="cur-label">Отображать цены в : </span><strong>USD</strong>
+										<span class="cur-label">Отображать цены в: </span><strong>{{money}}</strong>
+
 									</div>
 									<ul class="currency-list currency-toogle">
 										<li>
-											<a title="Dollar (USD)" href="single-product.html#">Долларах (USD)</a>
+											<a id='123' title="Dollar (USD)" href="javascript://" "Sijax.request('say_hi');">Долларах (USD)</a>
 										</li>
 										<li>
 											<a title="Euro (EUR)" href="single-product.html#">Евро (EUR)</a>
@@ -129,6 +133,16 @@
 											<a title="Euro (EUR)" href="single-product.html#">Злотых (PLN)</a>
 										</li>
 									</ul>
+									and the client side link:
+
+<a href="javascript://"
+onclick="Sijax.request('group_mod.sijax_test');">test</a>
+
+I have also tried:
+
+<a href="javascript://" onclick="Sijax.request('group_mod.test');">test</a>
+<a href="javascript://" onclick="Sijax.request('test');">test</a> # this is
+what the docs show for a single file app
 								</form>
 							</div>
 							<!--

@@ -1,23 +1,32 @@
 from flask import (render_template,
                    abort,
                    Blueprint,
-                   current_app,)
+                   current_app,
+                   g,
+                   request,
+                   jsonify)
 
 from .models import Products
 from datetime import datetime
 from time import time,strptime
 from random import randint
+import flask_sijax
+
+
 
 module = Blueprint('shop',
                    __name__)
 
 
+#@module.context_processor
+
+
 def log_error(*args, **kwargs):
     current_app.logger.error(*args, **kwargs)
 
-@module.route('/')
+
 @module.route('/index')
-def index():
+def main():
     np = Products.query.order_by(Products.pub_date.desc()).limit(5).all()
     sp = Products.query.order_by(Products.priceusd.desc()).limit(5).all()
     fp = Products.query.order_by(Products.id).limit(25).all()
