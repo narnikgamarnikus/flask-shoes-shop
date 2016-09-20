@@ -1,16 +1,12 @@
 from flask import (render_template,
-                   abort,
                    Blueprint,
                    current_app,
                    g,
-                   request,
-                   jsonify)
+                   request)
 
 from .models import Products
-from datetime import datetime
-from time import time,strptime
-from random import randint
 import flask_sijax
+
 
 
 
@@ -18,39 +14,58 @@ module = Blueprint('shop',
                    __name__)
 
 
-#@module.context_processor
+@flask_sijax.route(module, '/')
+def main():
+    def say_hi(obj_response):
+        obj_response.alert('Hi there!')
 
+    if g.sijax.is_sijax_request:
+        g.sijax.register_callback('say_hi', say_hi)
+        return g.sijax.process_request()
 
-def log_error(*args, **kwargs):
-    current_app.logger.error(*args, **kwargs)
+    return render_template('shop/base.html',
+        v='BYN')
 
 
 @module.route('/index')
-def main():
-    np = Products.query.order_by(Products.pub_date.desc()).limit(5).all()
-    sp = Products.query.order_by(Products.priceusd.desc()).limit(5).all()
-    fp = Products.query.order_by(Products.id).limit(25).all()
-    fp = Products.query.order_by(Products.id).limit(25).all()
-    lastnote = Products.query.order_by(Products.id.desc()).first()
-    print(randint(0,int(lastnote.id)))
+def index():
+    query = Products.query
+    np = query.order_by(Products.pub_date.desc()).limit(5).all()
+    sp = query.order_by(Products.priceusd.desc()).limit(5).all()
+    fp = query.order_by(Products.id).limit(25).all()
+    #fp = query.order_by(Products.id).limit(25).all()
+    #wc = Products.query.group_by(Products.category).all()
+
     return render_template('shop/index.html',
-                           np = np,
-                           sp = sp,
-                           fp = fp)
+                           np=np,
+                           sp=sp,
+                           fp=fp)
+
+
+@module.route('/shop-grid')
+def shop_grid():
+    return render_template('shop/shop-gird.html')
 
 
 @module.route('/<keyword>')
 def single_product(keyword):
-    sp = Products.query.filter_by(id=keyword).all()
+    query = Products.query
+    sp = query.filter(Products.url.endswith(keyword))
     return render_template('shop/single-product.html',
                            sp=sp)
 
+
 @module.route('/parse')
 def parse():
-    from ..parse import parse
-    parse = parse.Parse
-    k = 1
-    while k < 25:
-        parse.get_parse(parse,k)
-        parse.write_in_base(parse)
-        k += 1
+    from ..parse import parsing
+    return render_template('parse/parse.html')
+
+
+@module.context_processor
+def menu():
+    return dict(Products=Products)
+
+
+def price():
+    return dict(price=price)
+

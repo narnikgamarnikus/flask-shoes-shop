@@ -15,7 +15,6 @@
 		<!-- Favicon
 		============================================ -->
 		<link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
-
 		<!-- FONTS
 		============================================ -->
 		<link href='http://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
@@ -87,9 +86,6 @@
 		<!-- MODERNIZR JS
 		============================================ -->
         <script src="{{ url_for('static', filename='shop/js/vendor/modernizr-2.6.2.min.js') }}"></script>
-		<script src="{{ url_for('static', filename='js/sijax.js') }}"></script>
-		<script src="{{ url_for('static', filename='js/json2.js') }}"></script>
-		<script type="text/javascript">{{ g.sijax.get_js()|safe }}</script>
 </head>
 <body>
         <!--[if lt IE 8]>
@@ -111,38 +107,19 @@
 							</div>
 							-->
 							<div class="currenty-converter">
-								<form method="post" action="single-product.html#" id="currency-set">
+								<form method="post" action="" id="currency-set">
 									<div class="current-currency">
-										<span class="cur-label">Отображать цены в: </span><strong>{{money}}</strong>
+										<span class="cur-label">Отображать цены в: </span><strong>{{request.args.get('v')}}</strong>
 
 									</div>
 									<ul class="currency-list currency-toogle">
 										<li>
-											<a id='123' title="Dollar (USD)" href="javascript://" "Sijax.request('say_hi');">Долларах (USD)</a>
+										        <a title="Dollar (USD)" href="{{url_for(request.endpoint, v='USD')}}">Долларах (USD) </a>
 										</li>
 										<li>
-											<a title="Euro (EUR)" href="single-product.html#">Евро (EUR)</a>
-										</li>
-										<li>
-											<a title="Euro (EUR)" href="single-product.html#">Фунтах (GBP)</a>
-										</li>
-										<li>
-											<a title="Euro (EUR)" href="single-product.html#">Рублях (RUB)</a>
-										</li>
-										<li>
-											<a title="Euro (EUR)" href="single-product.html#">Злотых (PLN)</a>
+											<a title="Rubles (BYN)" href="{{url_for(request.endpoint, v='BYN')}}">Рублях (BYN)</a>
 										</li>
 									</ul>
-									and the client side link:
-
-<a href="javascript://"
-onclick="Sijax.request('group_mod.sijax_test');">test</a>
-
-I have also tried:
-
-<a href="javascript://" onclick="Sijax.request('group_mod.test');">test</a>
-<a href="javascript://" onclick="Sijax.request('test');">test</a> # this is
-what the docs show for a single file app
 								</form>
 							</div>
 							<!--
@@ -309,207 +286,44 @@ what the docs show for a single file app
 						<div class="mainmenu">
 							<nav>
 								<ul class="list-inline mega-menu">
-									<li><a href="index.html">Home</a>
+									<li><a href="index">Home</a>
 										<!-- DROPDOWN MENU START -->
-										<div class="home-var-menu">
+										<!--<div class="home-var-menu">
 											<ul class="home-menu">
 												<li><a href="index.html">Home variation 1</a></li>
 												<li><a href="index-2.html">Home variation 2</a></li>
 											</ul>
-										</div>
+										</div>-->
 										<!-- DROPDOWN MENU END -->
 									</li>
+									{% set query = Products.query %}
+									{% set genders = query.filter(Products.gender !=0).group_by(Products.gender) %}
+									{% for li in genders %}
 									<li>
-										<a href="shop-gird.html">Women</a>
+										<a href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{li.gender}}</a>
 										<!-- DRODOWN-MEGA-MENU START -->
 										<div class="drodown-mega-menu">
+										
+										{% set categories = query.filter(Products.category != 0, Products.category != 'Clothing').group_by(Products.category).all() %}
+										{% for item in categories %}
 											<div class="left-mega col-xs-6">
 												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">TOPS</a>
+												
+													<a class="mega-menu-title" href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{item.category}}</a>
 													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
+													{% set subcategory = Products.query.filter(Products.gender == li.gender, Products.category == item.category, Products.subcategory != 0).group_by(Products.subcategory) %}
+													{% for category in subcategory%}
+														<li><a href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{category.subcategory}}</a></li>
+														{% endfor %}
 													</ul>
 												</div>
 											</div>
-											<div class="right-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">Prodect</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Watch</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<!-- DRODOWN-MEGA-MENU END -->
+											{% endfor %}
+											<!--DRODOWN-MEGA-MENU END -->
 									</li>
-									<li>
-										<a href="shop-gird.html">Men</a>
-										<!-- DRODOWN-MEGA-MENU START -->
-										<div class="drodown-mega-menu">
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<!-- DRODOWN-MEGA-MENU END -->
-									</li>
-									<li>
-										<a href="shop-gird.html">clothing</a>
-										<!-- DRODOWN-MEGA-MENU START -->
-										<div class="drodown-mega-menu">
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">TOPS</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">new product</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="right-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">Prodect</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Watch</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">best sale month</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<!-- DRODOWN-MEGA-MENU END -->
-									</li>
-									<li>
-										<a href="shop-gird.html">Tops</a>
-										<!-- DRODOWN-MEGA-MENU START -->
-										<div class="drodown-mega-menu">
-											<div class="left-mega col-xs-4">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">TOPS</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="right-mega col-xs-4">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">best sale month</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="right-mega col-xs-4">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">top rate product</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">Latest product</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">popular product</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<!-- DRODOWN-MEGA-MENU END -->
-									</li>
-									<li>
-										<a href="shop-gird.html">T-shirts</a>
-										<!-- DRODOWN-MEGA-MENU START -->
-										<div class="drodown-mega-menu">
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">TOPS</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">new product</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-											<div class="right-mega col-xs-6">
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">Prodect</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Watch</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-												<div class="mega-menu-list">
-													<a class="mega-menu-title" href="shop-gird.html">best sale month</a>
-													<ul>
-														<li><a href="shop-gird.html">T-shirts</a></li>
-														<li><a href="shop-gird.html">clothing</a></li>
-														<li><a href="shop-gird.html">Delivery</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<!-- DRODOWN-MEGA-MENU END -->
-									</li>
-									<li><a href="single-product.html#">Delivery</a></li>
-									<li><a href="about-us.html">About us</a></li>
+									{% endfor %}
+									<li><a href="single-product.html#">Доставка</a></li>
+									<li><a href="about-us.html">О нас</a></li>
 								</ul>
 							</nav>
 						</div>
@@ -988,7 +802,7 @@ what the docs show for a single file app
 		<!-- JS
 		===============================================-->
 		<!-- jquery js -->
-		<script src="{{ url_for('static', filename='shop/js/vendor/jquery-1.11.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='shop/js/vendor/jquery-1.11.3.min.js') }}"></script>
 
 		<!-- fancybox js -->
         <script src="{{ url_for('static', filename='shop/js/jquery.fancybox.js') }}"></script>
@@ -1038,5 +852,8 @@ what the docs show for a single file app
 		</script>
 		<!-- main js -->
         <script src="{{ url_for('static', filename='shop/js/main.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/sijax/sijax.js') }}"></script>
+        <script>{{ g.sijax.get_js()|safe }}</script>
+
 </body>
 </html>

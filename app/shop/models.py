@@ -17,9 +17,15 @@ class Products(db.Model):
     pricegbp                = db.Column(db.String(64), index=True)
     pricerub                = db.Column(db.String(64), index=True)
     colorimages             = db.Column(db.String(64), index=True)
+    colorlinks              = db.Column(db.String(64), index=True)
+    fullimage               = db.Column(db.String(64), index=True)
+    smallimage              = db.Column(db.String(64), index=True)
+    hrefimage               = db.Column(db.String(64), index=True)
     pub_date                = db.Column(db.DateTime)
 
-    def __init__(self, url, title, gender, category, subcategory, model, pricepln, priceusd, priceeur, pricegbp, pricerub, colorimages, pub_date=None):
+
+
+    def __init__(self, url, title, gender, category, subcategory, model, pricepln, priceusd, priceeur, pricegbp, pricerub, colorimages, colorlinks, fullimage, smallimage, hrefimage, pub_date=None):
         self.url = url
         self.title = title
         self.gender = gender
@@ -32,15 +38,14 @@ class Products(db.Model):
         self.pricegbp = pricegbp
         self.pricerub = pricerub
         self.colorimages = colorimages
+        self.colorlinks = colorlinks
+        self.fullimage = fullimage
+        self.smallimage = smallimage
+        self.hrefimage = hrefimage
         if pub_date is None:
             pub_date = datetime.utcnow()
         self.pub_date = pub_date
-        self.money = self.get_price(self, self.money)
 
-    def get_price(self, money):
-        if str(money) == 'USD':
-            self.money = self.priceusd
-        return self.money
 
 
 
@@ -58,4 +63,8 @@ class Products(db.Model):
                '%r' % self.pricegbp + \
                '%r' % self.pricerub + \
                '%r' % self.colorimages + \
+               '%r' % self.colorlinks + \
+               '%r' % self.fullimage + \
+               '%r' % self.smallimage + \
+               '%r' % self.hrefimage + \
                '%r' % self.pub_date

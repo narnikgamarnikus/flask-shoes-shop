@@ -1,6 +1,6 @@
+<!-- MAIN-CONTENT-SECTION START -->
 {% extends "shop/base.html" %}
 {% block content %}
-		<!-- MAIN-CONTENT-SECTION START -->
 		{% for product in sp %}
 		<section class="main-content-section">
 			<div class="container">
@@ -8,10 +8,10 @@
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<!-- BSTORE-BREADCRUMB START -->
 						<div class="bstore-breadcrumb">
-							<a href="index.html">HOMe<span><i class="fa fa-caret-right"></i> </span> </a>
+							<a href="/index">HOMe<span><i class="fa fa-caret-right"></i> </span> </a>
 							<span> <i class="fa fa-caret-right"> </i> </span>
-							<a href="shop-gird.html"> {{brand}} </a>
-							<span> {{alttitle}} </span>
+							<a href="shop-gird.html"> {{product.category}} </a>
+							<span> {{product.title}} </span>
 						</div>
 						<!-- BSTORE-BREADCRUMB END -->
 					</div>
@@ -20,29 +20,29 @@
 					<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
 						<!-- SINGLE-PRODUCT-DESCRIPTION START -->
 						<div class="row">
+							{% set images = (product.fullimage[2:-2]).split("', '") %}
+							{% set simages = (product.smallimage[2:-2]).split("', '") %}
 							<div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
 								<div class="single-product-view">
 									  <!-- Tab panes -->
 									<div class="tab-content">
-										<div class="tab-pane active" id="thumbnail_1">
+									    {% for image in images %}
+										<div class="tab-pane {% if  loop.first  %} {{'active'}} {% endif %}" id="thumbnail_{{loop.index}}">
 											<div class="single-product-image">
-												<img src="{{product.image}}" alt="single-product-image" />
-												<a class="new-mark-box" href="single-product.html#">new</a>
-												<a class="fancybox" href="{{image1}}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+												<img src="{{image}}" alt="{{product.title}}" />
+												<a class="new-mark-box" href="{{ url_for('shop.single_product',keyword=product.id) }}">new</a>
+												<a class="fancybox" href="{{image}}" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
 											</div>	
 										</div>
+									    {% endfor %}
 									</div>										
 								</div>
 								<div class="select-product">
 									<!-- Nav tabs -->
 									<ul class="nav nav-tabs select-product-tab bxslider">
-
-										<li class="active">
-											<a href="single-product.html#thumbnail_1" data-toggle="tab"><img src="{{images}}" alt="pro-thumbnail" /></a>
-										</li>
-										{% for image in images %}
-										<li>
-											<a href="single-product.html#thumbnail_2" data-toggle="tab"><img src="{{images}}" alt="pro-thumbnail" /></a>
+										{% for image in simages %}
+										<li  class="{% if  loop.first  %} {{'active'}} {% endif %}">
+											<a href="single-product.html#thumbnail_{{loop.index}}" data-toggle="tab"><img src="{{image}}" alt="{{product.title}}" /></a>
 										</li>
 										{% endfor %}
 									</ul>
@@ -50,7 +50,7 @@
 							</div>
 							<div class="col-lg-7 col-md-7 col-sm-8 col-xs-12">
 								<div class="single-product-descirption">
-									<h2>{{alttitle}}</h2>
+									<h2>{{product.title}}</h2>
 									<div class="single-product-social-share">
 										<ul>
 											<li><a href="single-product.html#" class="twi-link"><i class="fa fa-twitter"></i>Tweet</a></li>
@@ -93,7 +93,7 @@
 										<a href="single-product.html#"><i class="fa fa-heart"></i></a>
 									</div>
 									<div class="single-product-quantity">
-										<p class="small-title">Quantity</p> 
+										<p class="small-title">Quantity</p>
 										<div class="cart-quantity">
 											<div class="cart-plus-minus-button single-qty-btn">
 												<input class="cart-plus-minus sing-pro-qty" type="text" name="qtybutton" value="0">
@@ -101,7 +101,7 @@
 										</div>
 									</div>
 									<div class="single-product-size">
-										<p class="small-title">Size </p> 
+										<p class="small-title">Size </p>
 										<select name="product-size" id="product-size">
 											<option value="">S</option>
 											<option value="">M</option>
@@ -109,9 +109,13 @@
 										</select>
 									</div>
 									<div class="single-product-color">
-										<p class="small-title">Color </p> 
-										<a href="single-product.html#"><span></span></a>
-										<a class="color-blue" href="single-product.html#"><span></span></a>
+										<p class="small-title">Color </p>
+										{% set images = (product.colorimages[2:-2]).split("', '") %}
+										{% set links = (product.colorlinks[2:-2]).split("', '") %}
+										{% for image in images %}
+										<a href="{{ url_for('shop.single_product',keyword=links[loop.index0].split('/')[4]) }}"><span><img src="{{image}}"></span></a>
+										{% endfor %}
+										<!--<a class="color-blue" href="single-product.html#"><span></span></a>-->
 									</div>
 									<div class="single-product-add-cart">
 										<a class="add-cart-text" title="Add to cart" href="single-product.html#">Add to cart</a>
@@ -635,5 +639,5 @@
 			</div>
 		</section>
 {% endfor %}
-		<!-- MAIN-CONTENT-SECTION END -->
-	{% endblock content %}
+{% endblock content %}
+<!-- MAIN-CONTENT-SECTION END -->

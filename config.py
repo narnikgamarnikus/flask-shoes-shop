@@ -9,7 +9,7 @@ class Config(object):
 
     CSRF_ENABLED = True
 
-    SECRET_KEY = 'fjf734md023k474jk92ska'
+    SECRET_KEY = 'iddqd3133122'
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'db_repository')
