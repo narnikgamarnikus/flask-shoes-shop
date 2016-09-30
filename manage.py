@@ -2,15 +2,6 @@
 import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-
-
-import os
-import hmac
-from hashlib import sha1
-from flask import session
-
-
-
 from app import create_app
 from app.database import db
 

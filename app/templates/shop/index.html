@@ -1,5 +1,7 @@
 {% extends "shop/base.html" %}
+{#% extends pjax('shop/base.html') %#}
 {% block content %}
+{% set i = 0 %}
 		<!-- MAIN-CONTENT-SECTION START -->
 		<section class="main-content-section">
 			<div class="container">
@@ -73,8 +75,8 @@
 															<a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" class="new-mark-box">new</a>
 															<div class="overlay-content">
 																<ul>
-																	<li><a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" title="Quick view"><i class="fa fa-search"></i></a></li>
-																	<li><a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" title="Quick view"><i class="fa fa-shopping-cart"></i></a></li>
+																	<li><a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" title="Quick view" data-pjax="#main"><i class="fa fa-search"></i></a></li>
+																	<li><a href="javascript://" onclick="addToCard('{{product.id}}, {% set list1 = (product.smallimage[1:-1]).split(',') %} {{ (list1[0])[1:-1] }}, {{product.title}}, {{product.priceusd[:-4]}}, {{product.url.split('/')[4]}}')" title="Add to card" class="add"><i class="fa fa-shopping-cart"></i></a></li>
 																	<li><a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" title="Quick view"><i class="fa fa-retweet"></i></a></li>
 																	<li><a href="{{ url_for('shop.single_product',keyword=product.url.split('/')[4]) }}" title="Quick view"><i class="fa fa-heart-o"></i></a></li>
 																</ul>
@@ -475,6 +477,8 @@
 					<!-- IMAGE-ADD-AREA END -->
 				</div>
 			</div>
+
 		</section>
 		<!-- MAIN-CONTENT-SECTION END -->
+		       
 {% endblock content %}
