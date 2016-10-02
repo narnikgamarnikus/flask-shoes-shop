@@ -5,96 +5,18 @@ from flask import (render_template,
                    request)
 
 from .models import Products
-import flask_sijax
-from sijax.plugin.comet import register_comet_object
-
-
+#import flask_sijax
+#from sijax.plugin.comet import register_comet_object
+from jinja2schema import infer, to_json_schema
+import json
+from collections import defaultdict
 
 module = Blueprint('shop',
                    __name__)
 
 
-
-class SijaxHandler(object):
-
-    @staticmethod
-    def create_card(obj_response):
-        count = 1
-        case = """
-        <a class="shop-link" href="cart.html" title="View my shopping cart">
-        <i class="fa fa-shopping-cart cart-icon"></i>
-        <b>Корзина</b>
-        <span class="ajax-cart-quantity" id="count">%s</span>
-        </a>
-                """ % count
-        total = """
-        <div id="shopcard">
-        </div>
-        <div class="shipping-total-bill">
-        <div class="cart-prices">
-        <span class="shipping-cost">$</span>
-        <span>Shipping</span>
-        </div>
-        <div class="total-shipping-prices">
-        <span class="shipping-total">$</span>
-        <span>Total</span>
-        </div>
-        </div>
-                """
-        obj_response.html_append('#shoppingcart', case)
-        obj_response.html_append('#cardlist', total)
-
-
-
-
-    @staticmethod
-    def add_to_card(obj_response, id):
-        i=0
-        product = Products.query.filter(Products.id == id).one()
-        obj_response.script("$('#count').text('%s')"%i)
-        i=+1
-        item = """
-                <div class="shipping-item" id="%s">
-                <span class="cross-icon"><i class="fa fa-times-circle" onclick="sjxComet.request('delete', ['{{product.id}}']);"></i></span>
-                <div class="shipping-item-image">
-                <a href="%s">
-                <img src="{{ url_for('images.fit',
-                filename=%s,
-                transform=transform,
-                enlarge=enlarge,
-                width=50,
-                height=50,
-                quality=90,
-            ) }}" />"</a>
-                </div>
-                <div class="shipping-item-text">
-                <span>1 <span class="pro-quan-x">x</span> <a href="%s" class="pro-cat">%s</a></span>
-                <span class="pro-quality"><a href="%s">%s</a></span>
-                <p>$%s</p>
-                </div>
-                </div>
-                """ % (i, product.url.split('/')[4], product.smallimage[2:-2].split("', '")[0], product.url.split('/')[4], product.title, product.url.split('/')[4], product.title, str(product.priceusd[:-3]))
-
-
-        #obj_response.script("$('#count').text('%s');" % i)
-        #obj_response.html_append('#shoppingcart', case)
-        obj_response.html_append('#shopcard', item)
-
-
-    def delete(obj_response):
-        obj_response.html('#%s', '' %i)
-
-
-
-        #obj_response.script("$('#count').text('%s');" % i)
-
-
-
-
-@flask_sijax.route(module, '/index')
+@module.route('/index')
 def index():
-
-
     #fp = query.order_by(Products.id).limit(25).all()
     #wc = Products.query.group_by(Products.category).all()
     query = Products.query
@@ -146,5 +68,19 @@ def parse():
 
 @module.context_processor
 def menu():
-    return dict(Products=Products)
+    q = Products.query
+    genders = q.filter(Products.gender !=0).group_by(Products.gender)
+    categories = q.filter(Products.category != 0, Products.category != 'Clothing').group_by(Products.category).all()
+    gen = {
+        gender.gender: {
+            category.category: {
+                subcategory.subcategory for subcategory in q.filter(Products.gender == gender.gender, Products.category == category.category, Products.subcategory != 0).group_by(Products.subcategory)
+            } for category in categories
+        } for gender in genders
+    }
+    
+    gen = json.dumps(gen, default=lambda obj: list(obj) if isinstance(obj, set) else "raise TypeError")
+    gen = json.loads(gen)
+
+    return dict(gen=gen)
 

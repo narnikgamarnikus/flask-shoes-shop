@@ -49,32 +49,28 @@
 										</div>-->
 										<!-- DROPDOWN MENU END -->
 									</li>
-									{% set query = Products.query %}
-									{% set genders = query.filter(Products.gender !=0).group_by(Products.gender) %}
-									{% for li in genders %}
-									<li>
-										<a href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{li.gender}}</a>
-										<!-- DRODOWN-MEGA-MENU START -->
-										<div class="drodown-mega-menu">
-										
-										{% set categories = query.filter(Products.category != 0, Products.category != 'Clothing').group_by(Products.category).all() %}
-										{% for item in categories %}
-											<div class="left-mega col-xs-6">
-												<div class="mega-menu-list">
-												
-													<a class="mega-menu-title" href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{item.category}}</a>
-													<ul>
-													{% set subcategory = Products.query.filter(Products.gender == li.gender, Products.category == item.category, Products.subcategory != 0).group_by(Products.subcategory) %}
-													{% for category in subcategory%}
-														<li><a href="{{ url_for('shop.shop_grid', gender=li.gender) }}">{{category.subcategory}}</a></li>
-														{% endfor %}
-													</ul>
-												</div>
-											</div>
-											{% endfor %}
-											<!--DRODOWN-MEGA-MENU END -->
-									</li>
+    {% for gender in gen %}
+        <li>
+            <a href="{{ url_for('shop.shop_grid', gender=gender) }}">{{gender}}</a>
+                <!-- DRODOWN-MEGA-MENU START -->
+                <div class="drodown-mega-menu">
+
+                    {% for category in gen[gender] %}
+                        <div class="left-mega col-xs-6">
+                        <div class="mega-menu-list">
+
+                        <a class="mega-menu-title" href="{{ url_for('shop.shop_grid', gender=gender) }}">{{category}}</a>
+                            <ul>
+                            {% for subcategory in gen[gender][category] %}
+                            <li><a href="{{ url_for('shop.shop_grid', gender=gender) }}">{{subcategory}}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                    </div>
+                                    </div>
+                                    {% endfor %}
 									{% endfor %}
+									
+									
 									<li><a href="single-product.html#">Доставка</a></li>
 									<li><a href="about-us.html">О нас</a></li>
 								</ul>
