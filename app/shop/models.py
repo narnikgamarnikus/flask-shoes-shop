@@ -1,6 +1,7 @@
 import datetime
 from app.database import db
 from datetime import datetime
+from math import ceil
 
 class Products(db.Model):
     #__tablename__ = 'Products'
@@ -46,9 +47,11 @@ class Products(db.Model):
             pub_date = datetime.utcnow()
         self.pub_date = pub_date
 
-
-
-
+    '''
+    def genders(self):
+        return Products.query.filter_by(gender = request.args.get('gender')).all()
+    '''
+    
     def __repr__(self):
         return '%r' % self.id + \
                '%r' % self.url + \
@@ -68,3 +71,7 @@ class Products(db.Model):
                '%r' % self.smallimage + \
                '%r' % self.hrefimage + \
                '%r' % self.pub_date
+            
+
+
+

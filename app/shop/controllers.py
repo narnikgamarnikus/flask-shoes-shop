@@ -2,7 +2,9 @@ from flask import (render_template,
                    Blueprint,
                    current_app,
                    g,
-                   request)
+                   request,
+                   session,
+                   abort)
 
 from .models import Products
 #import flask_sijax
@@ -48,16 +50,60 @@ def index():
                            fp=fp)
 '''
 
-@module.route('/shop-grid')
-def shop_grid():
-    return render_template('shop/shop-gird.html')
+@module.route('/shop-grid', methods=['GET', 'POST'])
+@module.route('/shop-grid/<int:page>', methods=['GET', 'POST'])
+def shop_grid(page=1):
+    if session['per_page'] is not None:
+        per_page = int(session['per_page'])
+    else:
+        per_page = 12
+        
+    q = Products.query
+
+    if request.method == 'POST':
+        session['per_page'] = request.form.get('per_page')
+        per_page = int(session['per_page'])
+        if request.args.get('gender'):
+            count = q.filter(Products.gender == request.args.get('gender')).count()
+            products = q.filter(Products.gender == request.args.get('gender')).paginate(page, per_page, count)
+        if request.args.get('category'):
+            count = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category')).count()
+            products = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category')).paginate(page, per_page, count)
+        if request.args.get('subcategory'):
+            count = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category'), Products.subcategory == request.args.get('subcategory')).count()
+            products = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category'), Products.subcategory == request.args.get('subcategory')).paginate(page, per_page, count)
+        return render_template('shop/shop-gird.html',
+                           products=products,
+                           count=count,
+                           per_page=per_page)
+    
+    if request.method == 'GET':
+        if request.args.get('gender'):
+            #print(per_page)
+            count = q.filter(Products.gender == request.args.get('gender')).count()
+            products = q.filter(Products.gender == request.args.get('gender')).paginate(page, per_page, count)
+        if request.args.get('category'):
+            #print(per_page)
+            count = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category')).count()
+            products = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category')).paginate(page, per_page, count)
+        if request.args.get('subcategory'):
+            #print(per_page)
+            count = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category'), Products.subcategory == request.args.get('subcategory')).count()
+            products = q.filter(Products.gender == request.args.get('gender'), Products.category == request.args.get('category'), Products.subcategory == request.args.get('subcategory')).paginate(page, per_page, count)
+    else:
+            abort(400)
+    return render_template('shop/shop-gird.html',
+                           products=products,
+                           count=count,
+                           per_page=per_page)
 
 
 @module.route('/<keyword>')
 def single_product(keyword):
     query = Products.query
     sp = query.filter(Products.url.endswith(keyword))
-    return render_template('shop/single-product.html', sp=sp)
+    return render_template('shop/single-product.html',
+                           sp=sp)
 
 
 @module.route('/parse')
@@ -79,8 +125,8 @@ def menu():
         } for gender in genders
     }
     
-    gen = json.dumps(gen, default=lambda obj: list(obj) if isinstance(obj, set) else "raise TypeError")
-    gen = json.loads(gen)
+    #gen = json.dumps(gen, default=lambda obj: list(obj) if isinstance(obj, set) else "raise TypeError")
+    #gen = json.loads(gen)
 
     return dict(gen=gen)
 
